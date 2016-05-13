@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Connector.Utilities;
-using Newtonsoft.Json;
 
-namespace ComanJuiceBusinessCommunicator
+namespace ComanJuiceBusinessCommunicator.Controllers
 {
     [BotAuthentication]
     public class MessagesController : ApiController
@@ -18,37 +14,26 @@ namespace ComanJuiceBusinessCommunicator
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
+        public static int count = 0;
+        public string LastUserId;
         private string[] _randomMessages= new string[] {"See our web page it is great coman-juice.com","You can find a lot of interesting information about us on our blog blog.coman-juice.com","Find tones of interesting examples of our work on gallery.coman-juice.com"};
         public async Task<Message> Post([FromBody]Message message)
         {
             if (message.Type == "Message")
             {
-                Random random = new Random();
-                // calculate something for us to return
-                if (message.Text == null)
-                {
-                    return message.CreateReplyMessage($"Can I help you with anything ?");
-                }
-                if (message.Text == "Hello")
-                {
-                    return message.CreateReplyMessage("Hello my dear friend how can i help you?");
-                }
-                if (message.Text == "Fuck you")
-                {
-                    return message.CreateReplyMessage("It was rude sir. I hope You are better than that.");
-                }
-                return message.CreateReplyMessage(RandomMessage(random));
+                count++;
+                if(count==1)
+                return await Conversation.SendAsync(message, () => new DialogWithLogic());
 
+                return await Conversation.SendAsync(message, () => new EchoDialog());
+
+
+                // return our reply to the user
             }
             else
             {
                 return HandleSystemMessage(message);
             }
-        }
-
-        private string RandomMessage(Random random)
-        {
-            return _randomMessages[random.Next(0,_randomMessages.Length-1)];
         }
 
         private Message HandleSystemMessage(Message message)
@@ -78,9 +63,34 @@ namespace ComanJuiceBusinessCommunicator
             }
             else if (message.Type == "EndOfConversation")
             {
+                return message.CreateReplyMessage("Good bye it was nice to meet you");
             }
 
             return null;
+        }
+
+        private Message FirstBot(Message message)
+        {
+            Random random = new Random();
+            // calculate something for us to return
+            if (message.Text == null)
+            {
+                return message.CreateReplyMessage($"Can I help you with anything ?");
+            }
+            if (message.Text == "Hello")
+            {
+                return message.CreateReplyMessage("Hello my dear friend how can i help you?");
+            }
+            if (message.Text == "Fuck you")
+            {
+                return message.CreateReplyMessage("It was rude sir. I hope You are better than that.");
+            }
+            return message.CreateReplyMessage(RandomMessage(random));
+        }
+
+        private string RandomMessage(Random random)
+        {
+            return  _randomMessages[random.Next(0,_randomMessages.Length-1)];
         }
     }
 }
