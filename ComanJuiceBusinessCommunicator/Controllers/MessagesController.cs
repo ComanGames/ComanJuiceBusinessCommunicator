@@ -14,22 +14,22 @@ namespace ComanJuiceBusinessCommunicator.Controllers
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
+        public static BotMessageData BotData;
         public static int count = 0;
         public string LastUserId;
         private static bool _isFirst=true;
         private string[] _randomMessages= new string[] {"See our web page it is great coman-juice.com","You can find a lot of interesting information about us on our blog blog.coman-juice.com","Find tones of interesting examples of our work on gallery.coman-juice.com"};
         public async Task<Message> Post([FromBody]Message message)
         {
+            if (_isFirst)
+            {
+                BotData = SerializationUtilities.LoadData();
+                _isFirst = false;
+            }
+
             if (message.Type == "Message")
             {
-                if (_isFirst)
-                {
-                    _isFirst = false;
-                    return message.CreateReplyMessage(SerializationUtilities.LoadData().FirstMessage);
-                }
                 return await Conversation.SendAsync(message, ()=>new DialogWithLogic() );
-//                return await Conversation.SendAsync(message, () => new EchoDialog());
-                // return our reply to the user
             }
             else
             {

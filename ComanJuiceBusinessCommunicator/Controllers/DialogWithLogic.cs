@@ -28,7 +28,11 @@ namespace ComanJuiceBusinessCommunicator.Controllers
             }
             else
             {
-                await context.PostAsync(string.Format("{0}: You said {1}", this.count++, argument));
+                if(count==0)
+                    await context.PostAsync(MessagesController.BotData.FirstMessage);
+                else
+                    await context.PostAsync(MessagesController.BotData.RendomMessages[new Random().Next(MessagesController.BotData.RendomMessages.Length)]);
+                count++;
                 context.Wait(MessageReceivedAsync);
             }
         }
@@ -38,7 +42,7 @@ namespace ComanJuiceBusinessCommunicator.Controllers
             var confirm = await argument;
             if (confirm)
             {
-                this.count = 1;
+                this.count = 0;
                 await context.PostAsync("Reset count.");
             }
             else

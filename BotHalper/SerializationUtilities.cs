@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Web;
-using System.Xml.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ComanJuiceBusinessCommunicator
 {
     public static class SerializationUtilities
     {
         private static string _folder = @"C:\Temp\data";
-        private static string _file = @"\textData.xml";
+        private static string _file = @"\botInfo.BotData";
         public  static BotMessageData LoadData()
         {
             if(!File.Exists(_folder+_file))
@@ -32,7 +29,7 @@ namespace ComanJuiceBusinessCommunicator
                 }
 
             } while (weHaveProblem);
-            XmlSerializer serializer = new XmlSerializer(typeof(BotMessageData));
+            BinaryFormatter serializer = new BinaryFormatter();
             BotMessageData data = serializer.Deserialize(fileStream) as BotMessageData;
 
             fileStream.Close();
@@ -60,7 +57,7 @@ namespace ComanJuiceBusinessCommunicator
                 }
                 
             } while (weHaveProblem);
-            XmlSerializer serializer = new XmlSerializer(typeof(BotMessageData));
+            BinaryFormatter serializer = new BinaryFormatter();
             serializer.Serialize(fileStream, data);
             fileStream.Close();
 
