@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ComanJuiceBusinessCommunicator;
 
@@ -58,6 +53,30 @@ namespace BotDataSetter
                 new ArgumentException();
                
             SerializationUtilities.SaveData(new BotMessageData(textBoxFirstMessage.Text,RendomMessages.ToArray()));
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            TreeNode treeNoe = treeViewReanomMessages.SelectedNode;
+            if (treeNoe == null)
+            {
+                MessageBox.Show("Please Select node to remove");
+                return;
+            }
+            RendomMessages.Remove(treeNoe.Text);
+            MessagesListToTreeView();
+        }
+
+        private void TreeViewDoubleClick(object sender, EventArgs e)
+        {
+            TreeNode treeNoe = treeViewReanomMessages.SelectedNode;
+            if (treeNoe == null)
+            {
+                MessageBox.Show("Please Select node to remove");
+                return;
+            }
+            rendomMessageTextBox.Text = treeNoe.Text;
+
         }
     }
 }
